@@ -2,12 +2,14 @@ import logging
 import os
 
 DEBUG = os.getenv("ENVIRONEMENT") == "DEV"
-APPLICATION_ROOT = os.getenv("APPLICATION_APPLICATION_ROOT", "/application")
-HOST = os.getenv("APPLICATION_HOST")
-PORT = int(os.getenv("APPLICATION_PORT", "3000"))
+APPLICATION_ROOT = os.getenv("APPLICATION_APPLICATION_ROOT", "/api")
+HOST = os.getenv("APPLICATION_HOST", "192.168.2.21")
+PORT = int(os.getenv("APPLICATION_PORT", "8080"))
 SQLALCHEMY_TRACK_MODIFICATIONS = False
+ALPHAVANTAGE_API_KEY = os.getenv("ALPHAVANTAGE_API_KEY", "OPHF3J94FCTPNKCC")
+JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "pontosecreto")
 
-DB_CONTAINER = os.getenv("APPLICATION_DB_CONTAINER", "db")
+DB_CONTAINER = os.getenv("APPLICATION_DB_CONTAINER", "localhost")
 POSTGRES = {
     "user": os.getenv("APPLICATION_POSTGRES_USER", "postgres"),
     "pw": os.getenv("APPLICATION_POSTGRES_PW", ""),

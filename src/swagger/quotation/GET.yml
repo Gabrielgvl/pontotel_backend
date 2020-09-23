@@ -1,0 +1,11 @@
+Return an user key information based on his name
+---
+tags:
+  - quotation
+responses:
+  200:
+    description: The bovespa's quotation were successfully retrieved
+    schema:
+      example:
+        quotation:
+          data: Example

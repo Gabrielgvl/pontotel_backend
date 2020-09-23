@@ -1,0 +1,21 @@
+Return an acess token if user exists
+---
+tags:
+  - user
+parameters:
+  - name: authorization
+    in: header
+    type: string
+    description: user's username + user's password in base64
+responses:
+  200:
+    description: Successful Login!
+    schema:
+      example:
+        user:
+          access_token: {token}
+  403:
+    description: Access denied!
+    schema:
+      example:
+        message: Username or password are incorrect!

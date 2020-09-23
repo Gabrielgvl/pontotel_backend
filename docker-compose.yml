@@ -4,14 +4,14 @@ services:
   server:
     env_file:
       - .env
-    image: python:3.7
+    image: python:3.8
     working_dir: /mnt
     volumes:
       - .:/mnt
     depends_on:
       - db
     ports:
-      - 3000:3000
+      - 8080:8080
     command: python src/server.py
 
   dbdata:
@@ -22,6 +22,12 @@ services:
     image: postgres:9.4
     volumes_from:
       - dbdata
+    ports:
+      - 5432:5432
+    expose:
+      - "5432"
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
 
   testserver:
     env_file: .env

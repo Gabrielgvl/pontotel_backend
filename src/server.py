@@ -4,6 +4,7 @@ from flask.blueprints import Blueprint
 
 import config
 import routes
+from flask_jwt_extended import JWTManager
 from models import db
 
 # config your API specs
@@ -22,7 +23,7 @@ server.config["SWAGGER"] = {
             "version": "0.0.1",
             "title": "Application",
             "endpoint": "spec",
-            "route": "/application/spec",
+            "route": "/api/spec",
             "rule_filter": lambda rule: True,  # all in
         }
     ],
@@ -30,12 +31,16 @@ server.config["SWAGGER"] = {
 }
 
 Swagger(server)
+JWTManager(server)
 
-server.debug = config.DEBUG
+server.config['JWT_SECRET_KEY'] = config.JWT_SECRET_KEY
+
+server.debug = True
 server.config["SQLALCHEMY_DATABASE_URI"] = config.DB_URI
 server.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = config.SQLALCHEMY_TRACK_MODIFICATIONS
 db.init_app(server)
 db.app = server
+db.create_all()
 
 for blueprint in vars(routes).values():
     if isinstance(blueprint, Blueprint):
