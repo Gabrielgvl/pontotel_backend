@@ -8,5 +8,5 @@ from resources import QuotationResource
 
 QUOTATION_BLUEPRINT = Blueprint("quotation", __name__)
 Api(QUOTATION_BLUEPRINT).add_resource(
-    QuotationResource, "/quotation"
+    QuotationResource, "/quotation/<string:company_symbol>"
 )

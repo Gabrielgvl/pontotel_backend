@@ -1,0 +1,24 @@
+Create an user based on the sent information
+---
+tags:
+  - user
+parameters:
+  - name: user_id
+    in: path
+    type: string
+    description: User's id
+  - name: options
+    in: body
+    schema:
+      type: object
+      properties:
+        default_company:
+          type: string
+          description: User's default company
+responses:
+  200:
+    description: The user's options was successfully uptaded
+    schema:
+      example:
+        user:
+          options

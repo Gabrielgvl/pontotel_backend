@@ -1,6 +1,7 @@
 from flasgger import Swagger
 from flask import Flask
 from flask.blueprints import Blueprint
+from flask_cors import CORS
 
 import config
 import routes
@@ -12,6 +13,7 @@ from models import db
 # ommit configs to get the default (all views exposed in /spec url)
 # rule_filter is a callable that receives "Rule" object and
 #   returns a boolean to filter in only desired views
+from util.seed_db import seed
 
 server = Flask(__name__)
 
@@ -35,12 +37,17 @@ JWTManager(server)
 
 server.config['JWT_SECRET_KEY'] = config.JWT_SECRET_KEY
 
+CORS(server)
+
+server.config['CORS_HEADERS'] = 'Content-Type'
+
 server.debug = True
 server.config["SQLALCHEMY_DATABASE_URI"] = config.DB_URI
 server.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = config.SQLALCHEMY_TRACK_MODIFICATIONS
 db.init_app(server)
 db.app = server
 db.create_all()
+seed()
 
 for blueprint in vars(routes).values():
     if isinstance(blueprint, Blueprint):

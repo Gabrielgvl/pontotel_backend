@@ -8,6 +8,7 @@ from flask import jsonify, abort
 from flask_jwt_extended import create_access_token
 from flask_restful import Resource
 from flask_restful.reqparse import Argument
+from sqlalchemy.orm.exc import NoResultFound
 
 from repositories import UserRepository
 from util import parse_params
@@ -25,7 +26,10 @@ class LoginResource(Resource):
         authorization = request.headers['Authorization']
         _, enconded_auth = authorization.split(' ')
         username, hashed_password = base64.b64decode(enconded_auth).decode("utf-8").split(':')
-        user = UserRepository.get(username=username, hashed_password=hashed_password)
+        try:
+            user = UserRepository.get(username=username, hashed_password=hashed_password)
+        except NoResultFound:
+            abort(403, "Usuário não encontrado!")
 
         if not user:
             return abort(403, description='Username or Password are incorrect!')
@@ -45,6 +49,28 @@ class RegisterResource(Resource):
     @swag_from("../swagger/user/REGISTER.yml")
     def post(username, hashed_password):
         """ Create an user based on the sent information """
-        user = UserRepository.create(username=username, hashed_password=hashed_password)
-        access_token = create_access_token(identity=username)
-        return jsonify({"access_token": access_token})
+        try:
+            user = UserRepository.create(username=username, hashed_password=hashed_password)
+            access_token = create_access_token(identity=username)
+            return jsonify({"access_token": access_token})
+        except:
+            return abort(403, description="Username already exists!")
+
+
+class UpdateOptionsResource(Resource):
+    """ Verbs relative to the users options"""
+
+    @staticmethod
+    @parse_params(
+        Argument("options", location="json", required=True, help="The username of the user."),
+    )
+    @swag_from("../swagger/user/REGISTER.yml")
+    def post(user_id, options):
+        """ Create an user based on the sent information """
+        try:
+            user = UserRepository.get_by_id(user_id)
+            user.options = options
+            user.save()
+            return user.json
+        except:
+            return abort(404, description="User doesn't exist!")

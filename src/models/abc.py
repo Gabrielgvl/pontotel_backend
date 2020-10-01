@@ -1,11 +1,12 @@
 """
 Define an Abstract Base Class (ABC) for models
 """
-from datetime import datetime
+from datetime import datetime, date
 from weakref import WeakValueDictionary
 
 from sqlalchemy import inspect
 from sqlalchemy.orm import aliased
+from sqlalchemy.orm.collections import InstrumentedList
 
 from . import db
 
@@ -50,10 +51,16 @@ class BaseModel:
     def json(self):
         """ Define a base way to jsonify models
             Columns inside `to_json_filter` are excluded """
+
+        def get_value(value):
+            if isinstance(value, InstrumentedList):
+                return [item.json for item in value]
+            if isinstance(value, datetime) or isinstance(value, date):
+                return value.strftime("%Y-%m-%d")
+            return value
+
         return {
-            column: value
-            if not isinstance(value, datetime)
-            else value.strftime("%Y-%m-%d")
+            column: get_value(value)
             for column, value in self._to_dict().items()
             if column not in self.to_json_filter
         }

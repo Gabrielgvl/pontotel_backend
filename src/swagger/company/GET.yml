@@ -1,0 +1,12 @@
+Return a list of companies
+---
+tags:
+  - company
+responses:
+  200:
+    description: List of available companies
+    schema:
+      example:
+        company:
+          name: Company
+          symbol: Symbol
